@@ -4,8 +4,12 @@ vim.keymap.set("n", "<leader>s", function()
     vim.lsp.buf.format()
 end)
 
-vim.keymap.set("n", "<Tab>", ":bnext<CR>", { silent = true })
-vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>", { silent = true })
+vim.keymap.set("n", "<Tab>", function()
+    require("bufferline").cycle(1)
+end, { silent = true })
+vim.keymap.set("n", "<S-Tab>", function()
+    require('bufferline').cycle(-1)
+end, { silent = true })
 
 vim.keymap.set("n", "<leader>q", ":bdelete<CR>", { silent = true })
 

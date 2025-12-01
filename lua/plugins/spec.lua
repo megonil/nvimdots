@@ -18,7 +18,7 @@ return
     },
     {
         "neovim/nvim-lspconfig",
-        dependencies = { "saghen/blink.cmp" },
+        dependencies = { "saghen/blink.cmp", "L3MON4D3/LuaSnip" },
         opts = {
             servers = {
                 lua_ls = {},
@@ -41,6 +41,7 @@ return
                 marksman = {},
                 yamlls = {},
                 hls = {},
+                jdtls = {},
             },
         },
         config = function(_, opts)
@@ -98,7 +99,7 @@ return
             -- C-k: Toggle signature help (if signature.enabled = true)
             --
             -- See :h blink-cmp-config-keymap for defining your own keymap
-            keymap = { preset = 'super-tab' },
+            keymap = { preset = 'default' },
 
             appearance = {
                 -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
@@ -249,7 +250,7 @@ return
                         delay = 200,
                         reveal = { 'close' }
                     },
-                    sort_by = 'id', -- |'insert_at_end' | 'id' | 'extension' | 'relative_directory' | 'directory' | 'tabs' | function(buffer_a, buffer_b)
+                    sort_by = '', -- |'insert_at_end' | 'id' | 'extension' | 'relative_directory' | 'directory' | 'tabs' | function(buffer_a, buffer_b)
                     -- add custom logic
                     -- local modified_a = vim.fn.getftime(buffer_a.path)
                     -- local modified_b = vim.fn.getftime(buffer_b.path)
@@ -438,6 +439,15 @@ return
             vim.keymap.set({ "i" }, "<C-K>", function() ls.expand() end, { silent = true })
             vim.keymap.set({ "i", "s" }, "<C-L>", function() ls.jump(1) end, { silent = true })
             vim.keymap.set({ "i", "s" }, "<C-J>", function() ls.jump(-1) end, { silent = true })
+
+            require("luasnip.loaders.from_vscode").lazy_load() -- friendly-snippets
+            require("luasnip.loaders.from_lua").lazy_load({
+                paths = vim.fn.stdpath("config") .. "/snippets"
+            })
         end
+    },
+    {
+        "mfussenegger/nvim-jdtls"
     }
+
 }
