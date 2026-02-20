@@ -1,7 +1,7 @@
 return {
 
     -- A list of parser names, or "all" (the listed parsers MUST always be installed)
-    ensure_installed = { "c", "rust", "javascript", "typescript", "cpp", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
+    ensure_installed = { "c", "rust", "javascript", "typescript", "cpp", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "go" },
 
     -- Install parsers synchronously (only applied to `ensure_installed`)
     sync_install = false,
@@ -39,4 +39,3 @@ return {
         additional_vim_regex_highlighting = false,
     }
 }
-
