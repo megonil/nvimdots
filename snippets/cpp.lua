@@ -2,6 +2,7 @@ local ls = require("luasnip")
 local s = ls.snippet
 local t = ls.text_node
 local i = ls.insert_node
+local c = ls.choice_node
 local rep = require("luasnip.extras").rep
 local fmt = require("luasnip.extras.fmt").fmt
 
@@ -21,21 +22,15 @@ return {
   s("vec", {
     t("std::vector")
   }),
-  s("cond",
-    fmt([[
-{}{}
-{}
-#else
-{}
-#endif
-]], {
-      c(1, {
-        fmt("#if defined({})", { i(2) }),
-        fmt("#ifndef {}", { i(2) }),
-      }),
-      t({ "", "" }),
-      i(3),
-      i(4),
-    })
-  )
+  s("cond", {
+    c(1, {
+      fmt("#if defined({})", { i(1, "MACRO") }),
+      fmt("#ifndef {}", { i(1, "MACRO") }),
+    }),
+    t({ "", "" }),
+    i(2),
+    t({ "", "#else", "" }),
+    i(3),
+    t({ "", "#endif" }),
+  })
 }
