@@ -9,11 +9,21 @@ return
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-    opts = function()
-      return require("config.treesitter")
-    end,
-    config = function(_, opts)
-      require("nvim-treesitter.configs").setup(opts)
+    lazy = false,
+    config = function()
+      local langs = { "c", "rust", "javascript", "typescript", "cpp", "lua", "vim", "vimdoc", "query", "markdown",
+        "markdown_inline", "go" }
+
+      local ts = require('nvim-treesitter')
+      ts.setup()
+      ts.install(langs)
+
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = langs,
+        callback = function()
+          vim.treesitter.start()
+        end
+      })
     end,
   },
   {
@@ -53,6 +63,7 @@ return
             }
           }
         },
+        glsl_analyzer = {},
         ts_ls = {},
         eslint = {},
         pyright = {},
@@ -115,14 +126,33 @@ return
           vim.keymap.set("n", "K", vim.lsp.buf.hover, map_opts)
           vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, map_opts)
           vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, map_opts)
-          vim.keymap.set("n", "<M-k>", vim.diagnostic.goto_next, { silent = true })
-          vim.keymap.set("n", "<M-j>", vim.diagnostic.goto_prev, { silent = true })
+          vim.keymap.set("n", "<M-k>", function()
+            vim.diagnostic.jump({
+              count = 1,
+              on_jump = function(diagnostic, bufnr)
+                if diagnostic then
+                  vim.diagnostic.open_float(bufnr, { focus = false })
+                end
+              end,
+            })
+          end, { silent = true })
+
+          vim.keymap.set("n", "<M-j>", function()
+            vim.diagnostic.jump({
+              count = -1,
+              on_jump = function(diagnostic, bufnr)
+                if diagnostic then
+                  vim.diagnostic.open_float(bufnr, { focus = false })
+                end
+              end,
+            })
+          end, { silent = true })
           vim.keymap.set("n", "<C-.>", vim.lsp.buf.code_action, map_opts)
           vim.keymap.set("n", "<C-R>", vim.lsp.buf.references, map_opts)
           vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, map_opts)
           vim.keymap.set("n", "<leader>U", vim.lsp.buf.signature_help, map_opts)
 
-          if client.supports_method("textDocument/formatting") then
+          if client.server_capabilities.documentFormattingProvider then
             vim.api.nvim_create_autocmd("BufWritePre", {
               buffer = bufnr,
               callback = function()
@@ -412,7 +442,7 @@ return
     "nvim-treesitter/nvim-treesitter-textobjects",
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     config = function()
-      require("nvim-treesitter.configs").setup {
+      require("nvim-treesitter.config").setup {
         select = {
           enable = true,
 
@@ -565,5 +595,8 @@ return
       -- my snippets
       require("luasnip.loaders.from_lua").lazy_load({ paths = "/home/megonil/.config/nvim/snippets" })
     end,
+  },
+  {
+    "timtro/glslView-nvim"
   },
 }
