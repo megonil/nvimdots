@@ -38,20 +38,31 @@ function M.setup()
   vim.g.loaded_netrw = 1
   vim.g.loaded_netrwPlugin = 1
 
-  -- vim.diagnostic.config({
-  --     virtual_text = {
-  --         spacing = 4,
-  --         prefix = "●",
-  --         source = "if_many",
-  --     },
-  --     update_in_insert = false,
-  --     underline = true,
-  --     severity_sort = true,
-  --     float = {
-  --         border = "rounded",
-  --         source = "always",
-  --     },
-  -- })
+  -- vim.diagnostic.config {
+  --   virtual_text = true,
+  --   update_in_insert = false,
+  --   severity_sor = true,
+  --   float = {
+  --     border = "rounded",
+  --     source = "always"
+  --   }
+  -- }
+
+  vim.g.live_server = {
+    port = 8080,
+    browser = false,
+  }
+
+  vim.opt.rtp:prepend("/home/megonil/.opam/default/share/ocp-indent/vim")
+
+  vim.filetype.add {
+    filename = {
+      ['.mly'] = "menhir",
+      ['.mll'] = "ocamllex"
+    }
+  }
+
+  vim.lsp.log.set_level("WARN")
 end
 
 return M

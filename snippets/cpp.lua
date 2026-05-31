@@ -32,5 +32,12 @@ return {
     t({ "", "#else", "" }),
     i(3),
     t({ "", "#endif" }),
-  })
+  }),
+  s("nfmt", fmt([[
+ // clang-format off
+ {}
+ // clang-format on
+]], {
+    i(1),
+  }))
 }

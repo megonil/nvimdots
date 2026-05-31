@@ -8,17 +8,17 @@ return
   },
   {
     "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
+    build = ":tsupdate",
     lazy = false,
     config = function()
       local langs = { "c", "rust", "javascript", "typescript", "cpp", "lua", "vim", "vimdoc", "query", "markdown",
-        "markdown_inline", "go" }
+        "markdown_inline", "go", "nim", "zig", "ocaml" }
 
       local ts = require('nvim-treesitter')
       ts.setup()
       ts.install(langs)
 
-      vim.api.nvim_create_autocmd('FileType', {
+      vim.api.nvim_create_autocmd('filetype', {
         pattern = langs,
         callback = function()
           vim.treesitter.start()
@@ -47,22 +47,34 @@ return
             }
           },
         },
+        zls = {},
+        ocamllsp = {},
+        nimls = {},
         clangd = {
           cmd = {
             "clangd",
             "--compile-commands-dir=build",
+            "--background-index",
             "--clang-tidy",
             "--clang-tidy-checks=*",
+            "--completion-style=detailed",
+            "--header-insertion=never",
+            "--all-scopes-completion",
+            "--cross-file-rename",
+            "--function-arg-placeholders=false",
+            "--fallback-style=llvm",
+            "--offset-encoding=utf-16",
+            "--pch-storage=memory",
           },
         },
-        roslyn = {
-          settings = {
-            ["csharp|inlay_hints"] = {
-              csharp_enable_inlay_hints_for_implicit_object_creation = true,
-              csharp_enable_inlay_hints_for_implicit_variable_types = true,
+        astro = {
+          init_options = {
+            typescript = {
+              tsdk = "/usr/lib/node_modules/typescript/lib"
             }
           }
         },
+        roslyn = {},
         glsl_analyzer = {},
         ts_ls = {},
         eslint = {},
@@ -160,6 +172,9 @@ return
               end,
             })
           end
+          if client.server_capabilities.inlayHintProvider then
+            vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+          end
         end,
       })
     end,
@@ -217,9 +232,6 @@ return
 
   {
     "akinsho/toggleterm.nvim",
-    --    config = function()
-    --        require('toggleterm').setup(require('config.toggleterm').setup())
-    --    end
     version = "*",
     opts = {
       open_mapping = [[<C-j>]],
